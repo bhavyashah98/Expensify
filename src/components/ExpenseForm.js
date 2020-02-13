@@ -33,7 +33,7 @@ const ExpenseForm = (props) => {
             setError('');
             props.onSubmit({
                 description: description.value,
-                amount: amount.value,
+                amount: parseFloat(amount.value),
                 createdAt: createdAt.valueOf(),
                 note: note.value
             });
@@ -43,8 +43,8 @@ const ExpenseForm = (props) => {
       <div>
           {error && <p>{error}</p>}
          <form onSubmit={onSubmit}>
-             <input type="text" placeholder="description" {...description}/>
-             <input type="number" placeholder="Amount" {...amount} step=".01"/>
+             <input type="text" placeholder="description" {...description} autoFocus className="text-input" />
+             <input type="number" placeholder="Amount"className="text-input" {...amount} step=".01"/>
              <SingleDatePicker
                 date={createdAt}
                 onDateChange={onDateChange}
@@ -53,8 +53,8 @@ const ExpenseForm = (props) => {
                 numberOfMonths={1}
                 isOutsideRange={() => {return false}}
              />
-             <textarea placeholder="Note for your expenses (optional)" {...note}/>
-             <button>Add Expense</button>
+             <textarea placeholder="Note for your expenses (optional)" className="textarea" {...note}/>
+             <button className="button">Add Expense</button>
          </form>
       </div>
     );
