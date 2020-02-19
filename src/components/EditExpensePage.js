@@ -1,43 +1,45 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {connect} from 'react-redux';
 import ExpenseForm from "./ExpenseForm";
-import {editExpense, removeExpense} from "../actions/expenses";
+import {editExpense, removeExpense} from "../actions/expenseActions";
+import {getExpenses} from "../reducers/expensesReducer";
 
-const EditExpensePage = (props) => (
-    <div>
-        <div className="page-header">
-            <div className="content-container">
-                <h1 className="page-header__title">Edit Expense</h1>
+const EditExpensePage = ({editExpense,history,removeExpense,expense}) => {
+
+    const onEditExpense = useCallback((exp) => {
+        editExpense(expense.id,exp);
+        history.push('/');
+    },[editExpense,history]);
+
+    const onRemoveExpense= useCallback(() => {
+        removeExpense({id: expense.id});
+        history.push('/');
+    },[removeExpense,history]);
+
+    return (
+        <React.Fragment>
+            <div className="page-header">
+                <div className="content-container">
+                    <h1 className="page-header__title">Edit Expense</h1>
+                </div>
             </div>
-        </div>
-        <div className="content-container">
-            <ExpenseForm
-                expense={props.expense}
-                onSubmit={(expense) => {
-                    props.editExpense(props.expense.id,expense);
-                    props.history.push('/');
-                }}
-            />
-            <button className="button button--secondary" onClick={() => {
-                props.removeExpense(props.expense.id);
-                props.history.push('/');
-            }}>Remove Expense</button>
-        </div>
-    </div>
-);
+            <div className="content-container">
+                <ExpenseForm
+                    expense={expense}
+                    onSubmit={onEditExpense}
+                />
+                <button className="button button--secondary" onClick={onRemoveExpense}>Remove Expense</button>
+            </div>
+        </React.Fragment>
+    );
+};
 
 const matchStateToProps = (state,props) => {
     return {
-        expense: state.expenses.find((expense) => {
+        expense: getExpenses(state).find((expense) => {
             return expense.id === (props.match.params.id);
         })
     }
 };
 
-const matchDispatchToProps = (dispatch,props) => {
-    return {
-        editExpense: (id,updates) => dispatch(editExpense(id,updates)),
-        removeExpense: (id) => dispatch(removeExpense({id}))
-    }
-};
-export default connect(matchStateToProps,matchDispatchToProps)(EditExpensePage);
+export default connect(matchStateToProps,{editExpense,removeExpense})(EditExpensePage);

@@ -1,26 +1,28 @@
-import React from 'react';
+import React,{useCallback} from 'react';
 import {useState} from 'react';
 import moment from 'moment';
 import {SingleDatePicker} from 'react-dates';
 import 'react-dates/lib/css/_datepicker.css';
 
-const ExpenseForm = (props) => {
-    const description = useFormInput(props.expense ? props.expense.description : '');
-    const amount = useFormInput(props.expense ? props.expense.amount : '');
-    const note = useFormInput(props.expense ? props.expense.note : '');
-    const [createdAt,setCreatedAt] = useState(props.expense ? moment(props.expense.createdAt) : moment());
+const ExpenseForm = ({expense,onSubmit}) => {
+    const description = useFormInput(expense ? expense.description : '');
+    const amount = useFormInput(expense ? expense.amount : '');
+    const note = useFormInput(expense ? expense.note : '');
+    const [createdAt,setCreatedAt] = useState(expense ? moment(expense.createdAt) : moment());
     const [calenderFocused,setCalenderFocused] = useState(false);
     const [error, setError] = useState('');
-    const onDateChange = (createdAt) => {
+
+    const onDateChange = useCallback((createdAt) => {
         if(createdAt){
             setCreatedAt(createdAt);
         }
-    };
-    const onFocusChange = ({focused}) => {
-        setCalenderFocused(focused);
-    };
+    },[setCreatedAt]);
 
-    const onSubmit = (e) => {
+    const onFocusChange = useCallback(({focused}) => {
+        setCalenderFocused(focused);
+    },[setCalenderFocused]);
+
+    const submit = useCallback((e) => {
         e.preventDefault();
         if(!description.value && !amount.value){
             setError('Please provide description and amount');
@@ -31,18 +33,19 @@ const ExpenseForm = (props) => {
             setError('Please provide amount');
         }else{
             setError('');
-            props.onSubmit({
+            onSubmit({
                 description: description.value,
                 amount: parseFloat(amount.value),
                 createdAt: createdAt.valueOf(),
                 note: note.value
             });
         }
-    };
+    },[description.value,amount.value,createdAt,note.value]);
+
     return (
-      <div>
+      <React.Fragment>
           {error && <p>{error}</p>}
-         <form onSubmit={onSubmit}>
+         <form className="form" onSubmit={submit}>
              <input type="text" placeholder="description" {...description} autoFocus className="text-input" />
              <input type="number" placeholder="Amount"className="text-input" {...amount} step=".01"/>
              <SingleDatePicker
@@ -54,18 +57,18 @@ const ExpenseForm = (props) => {
                 isOutsideRange={() => {return false}}
              />
              <textarea placeholder="Note for your expenses (optional)" className="textarea" {...note}/>
-             <button className="button">Add Expense</button>
+             <button className="button">{expense? "Edit Expense": "Add Expense"}</button>
          </form>
-      </div>
+      </React.Fragment>
     );
 };
 
 const useFormInput = (initialValue) => {
     const [value,setValue] = useState(initialValue);
 
-    const handleOnChange = (e) => {
+    const handleOnChange = useCallback((e) => {
         setValue(e.target.value);
-    };
+    },[setValue]);
 
     return {
         value,

@@ -1,29 +1,29 @@
-import React from 'react';
+import React,{useCallback} from 'react';
 import ExpenseForm from "./ExpenseForm";
 import {connect} from 'react-redux';
-import {addExpense} from "../actions/expenses";
+import {addExpense} from "../actions/expenseActions";
 
-const AddExpensePage = (props) => (
-    <div>
-        <div className="page-header">
-            <div className="content-container">
-                <h1 className="page-header__title">Add Expense</h1>
+const AddExpensePage = ({addExpense,history}) => {
+
+    const onAddExpense = useCallback((expense)=> {
+        addExpense(expense);
+        history.push('/');
+    },[addExpense,history]);
+
+    return (
+        <React.Fragment>
+            <div className="page-header">
+                <div className="content-container">
+                    <h1 className="page-header__title">Add Expense</h1>
+                </div>
             </div>
-        </div>
-        <div className="content-container">
-            <ExpenseForm
-                onSubmit={(expense) => {
-                    props.addExpense(expense);
-                    props.history.push('/')
-                }}
-            />
-        </div>
-    </div>
-);
+            <div className="content-container">
+                <ExpenseForm
+                    onSubmit={onAddExpense}
+                />
+            </div>
+        </React.Fragment>
+    );
+};
 
-const matchDispatchToProps = (dispatch,props) => {
-    return {
-        addExpense: (expense) => dispatch(addExpense(expense))
-    }
-}
-export default connect(null,matchDispatchToProps)(AddExpensePage);
+export default connect(null,{addExpense})(AddExpensePage);

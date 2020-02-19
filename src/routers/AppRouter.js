@@ -1,17 +1,14 @@
 import React from 'react';
 import {BrowserRouter,Route,Switch} from 'react-router-dom';
-// import {Route, Switch} from 'react-router';
 import ExpenseDashboardPage from '../components/ExpenseDashboardPage';
 import AddExpensePage from '../components/AddExpensePage';
 import EditExpensePage from '../components/EditExpensePage';
 import NotFoundPage from '../components/NotFoundPage';
 import Header from '../components/Header';
 
-
-
 const AppRouter = () => (
     <BrowserRouter>
-        <div>
+        <React.Fragment>
             <Header/>
             <Switch>
                 <Route path='/' exact={true} component={ExpenseDashboardPage}/>
@@ -19,7 +16,7 @@ const AppRouter = () => (
                 <Route path='/edit/:id' component={EditExpensePage}/>
                 <Route component={NotFoundPage}/>
             </Switch>
-        </div>
+        </React.Fragment>
     </BrowserRouter>
 );
 
