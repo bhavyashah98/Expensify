@@ -8,6 +8,6 @@ Currently available features are:-
     * Date
     * Amount
 
-2)Filter Data
+2) Filter Data
     * startDate - endDate
     * Text 
